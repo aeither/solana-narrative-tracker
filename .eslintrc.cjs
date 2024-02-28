@@ -54,6 +54,10 @@ module.exports = {
       files: ["**/*.{ts,tsx}"],
       plugins: ["@typescript-eslint", "import"],
       parser: "@typescript-eslint/parser",
+      rules: {
+        // Add TypeScript specific rules (and extend them)
+        "@typescript-eslint/no-explicit-any": ["warn"],
+      },
       settings: {
         "import/internal-regex": "^~/",
         "import/resolver": {
