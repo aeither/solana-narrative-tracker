@@ -2,7 +2,18 @@
 export default {
   ignoredRouteFiles: ["**/*.css"],
   browserNodeBuiltinsPolyfill: {
-    modules: { buffer: true },
+    modules: {
+      buffer: true,
+      http: true,
+      https: true,
+      zlib: true,
+      util: true,
+      url: true,
+      stream: true,
+      assert: true,
+      string_decoder: true,
+      events: true,
+    },
   },
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",

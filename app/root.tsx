@@ -10,6 +10,7 @@ import {
   json,
   useLoaderData,
 } from "@remix-run/react";
+import { ContextProvider } from "./context/ContextProvider";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -34,15 +35,17 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
-        <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
-          }}
-        />
-        <Scripts />
-        <LiveReload />
+        <ContextProvider>
+          <Outlet />
+          <ScrollRestoration />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+            }}
+          />
+          <Scripts />
+          <LiveReload />
+        </ContextProvider>
       </body>
     </html>
   );
