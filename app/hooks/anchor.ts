@@ -1,6 +1,7 @@
 import { AnchorProvider, Program, web3 } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { TransactionConfirmationStrategy } from "@solana/web3.js";
 import { BN } from "bn.js";
 import { useEffect, useState } from "react";
 import { PROGRAM_ID, connection } from "~/constants";
@@ -27,7 +28,6 @@ export default function useProgram() {
         );
 
         const program = new Program(IDL, PROGRAM_ID, provider);
-
         setProgram(program);
       }
     }
@@ -45,15 +45,20 @@ export default function useProgram() {
         .initialize(data)
         .accounts({
           newAccount: newAccountKp.publicKey,
-          signer: wallet.publicKey,
-          systemProgram: web3.SystemProgram.programId,
         })
         .signers([newAccountKp])
         .rpc();
       console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
 
       // Confirm transaction
-      await connection.confirmTransaction(txHash);
+      const commitment = "confirmed";
+      const latestBlockHash = await connection.getLatestBlockhash(commitment);
+      const strategy: TransactionConfirmationStrategy = {
+        signature: txHash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        blockhash: latestBlockHash.blockhash,
+      };
+      await connection.confirmTransaction(strategy, commitment);
 
       // Fetch the created account
       const newAccount = await program.account.newAccount.fetch(
