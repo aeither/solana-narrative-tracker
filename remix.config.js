@@ -14,6 +14,9 @@ export default {
       string_decoder: true,
       events: true,
     },
+    globals: {
+      Buffer: true,
+    },
   },
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
