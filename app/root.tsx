@@ -11,6 +11,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { ContextProvider } from "./context/ContextProvider";
+import "@solana/wallet-adapter-react-ui/styles.css";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
