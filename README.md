@@ -1,6 +1,18 @@
-# Welcome to Remix!
+## Intro
 
-- [Remix Docs](https://remix.run/docs)
+Tech stack: Remix, Tailwind, Anchor
+
+## Demo
+
+## Getting Started
+
+## Requirements
+
+Install Solana wallet. Phantom Wallet is a recommended. 
+[Phantom Wallet Chrome Extension](https://chromewebstore.google.com/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa)
+
+Get some testnet SOL
+[Solana Faucet](https://faucet.solana.com/)
 
 ## Development
 
@@ -25,14 +37,3 @@ Then run the app in production mode:
 ```sh
 npm start
 ```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `remix build`
-
-- `build/`
-- `public/build/`
