@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { RPC_URL } from "~/constants";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { RPC_URL, connection } from "~/constants";
 
 export const meta: MetaFunction = () => {
   return [
@@ -20,7 +20,6 @@ export default function Login() {
         console.log("window undefined");
         return;
       }
-      const connection = new Connection(RPC_URL, "confirmed");
       const balanceInLamports = await connection.getBalance(publicKey);
       const balanceInSOL = balanceInLamports / LAMPORTS_PER_SOL;
       return balanceInSOL;
