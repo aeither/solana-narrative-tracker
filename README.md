@@ -4,7 +4,6 @@ Tech stack: Remix, Tailwind, Anchor
 
 ## Demo
 
-## Getting Started
 
 ## Requirements
 
@@ -13,6 +12,13 @@ Install Solana wallet. Phantom Wallet is a recommended.
 
 Get some testnet SOL
 [Solana Faucet](https://faucet.solana.com/)
+
+## Getting Started
+
+https://beta.solpg.io/
+
+Go to "Build & Deploy" Tab and copy the Program ID and export the IDL
+
 
 ## Development
 

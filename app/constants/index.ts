@@ -6,7 +6,9 @@ export const PROGRAM_ID = new PublicKey(
 
 export const RPC_URL =
   typeof window !== "undefined"
-    ? `https://devnet.helius-rpc.com/?api-key=${window.ENV.HELIUS_API_KEY}`
+    ? `https://devnet.helius-rpc.com/?api-key=${
+        (window as unknown as any).ENV.HELIUS_API_KEY
+      }`
     : "https://api.devnet.solana.com";
 
 export const connection = new Connection(RPC_URL, "confirmed");
