@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 declare_id!("CfqCT3ojotQKHizmE73CBo95LT6MLCKQCEm3dnztJPUk");
 
 #[program]
-pub mod your_program_name {
+pub mod narrative_list {
     use super::*;
 
     pub fn init_user(ctx: Context<InitUser>) -> Result<()> {
