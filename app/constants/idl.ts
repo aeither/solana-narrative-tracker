@@ -24,7 +24,7 @@ export type IDLType = {
   ];
   accounts: [
     {
-      name: "UserAccount";
+      name: "userAccount";
       type: {
         kind: "struct";
         fields: [
@@ -34,7 +34,7 @@ export type IDLType = {
       };
     },
     {
-      name: "ItemAccount";
+      name: "itemAccount";
       type: {
         kind: "struct";
         fields: [
@@ -73,7 +73,7 @@ export const IDL: IDLType = {
   ],
   accounts: [
     {
-      name: "UserAccount",
+      name: "userAccount",
       type: {
         kind: "struct",
         fields: [
@@ -83,7 +83,7 @@ export const IDL: IDLType = {
       },
     },
     {
-      name: "ItemAccount",
+      name: "itemAccount",
       type: {
         kind: "struct",
         fields: [

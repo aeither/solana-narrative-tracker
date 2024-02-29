@@ -1,8 +1,7 @@
-import { AnchorProvider, Program, web3 } from "@coral-xyz/anchor";
+import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { TransactionConfirmationStrategy } from "@solana/web3.js";
-import { BN } from "bn.js";
+import { PublicKey, TransactionConfirmationStrategy } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { PROGRAM_ID, connection } from "~/constants";
 import { IDL, IDLType } from "~/constants/idl";
@@ -37,20 +36,18 @@ export default function useProgram() {
     try {
       if (!program || !wallet.publicKey || !wallet.signTransaction) return;
 
-      const newAccountKp = new web3.Keypair();
-
-      // For enum
-      // const state = program.programIdl.enums.find((e) => e.name === "AppState")
-      //   .variants[1].name;
+      // Derive the PDA for the newUserAccount
+      const [newUserAccountPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
 
       // Send transaction
-      const data = new BN(42);
       const txHash = await program.methods
-        .initialize(data)
+        .initUser()
         .accounts({
-          newAccount: newAccountKp.publicKey,
+          newUserAccount: newUserAccountPDA,
         })
-        .signers([newAccountKp])
         .rpc();
       console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
 
@@ -65,11 +62,70 @@ export default function useProgram() {
       await connection.confirmTransaction(strategy, commitment);
 
       // Fetch the created account
-      const newAccount = await program.account.newAccount.fetch(
-        newAccountKp.publicKey
+      const newAccount = await program.account.userAccount.fetch(
+        wallet.publicKey
       );
 
-      console.log("On-chain data is:", newAccount.data.toString());
+      console.log("On-chain data is: ", newAccount.lastId.toString());
+
+      return txHash;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  };
+
+  const addItemAnchor = async (content: string) => {
+    try {
+      if (!program || !wallet.publicKey || !wallet.signTransaction) return;
+
+      // Fetch the created account
+      const userAccount = await program.account.userAccount.fetch(
+        wallet.publicKey
+      );
+
+      // Derive the PDA for the newUserAccount
+      const [userAccountPDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), wallet.publicKey.toBuffer()],
+        program.programId
+      );
+
+      // Derive the PDA for the itemAccountPDA
+      const [itemAccountPDA] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from("item"),
+          wallet.publicKey.toBuffer(),
+          Uint8Array.from([userAccount.lastId]),
+        ],
+        program.programId
+      );
+
+      // Send transaction
+      const txHash = await program.methods
+        .addItem(content)
+        .accounts({
+          userAccount: userAccountPDA,
+          newItemAccount: itemAccountPDA,
+        })
+        .rpc();
+      console.log(`Use 'solana confirm -v ${txHash}' to see the logs`);
+
+      // Confirm transaction
+      const commitment = "confirmed";
+      const latestBlockHash = await connection.getLatestBlockhash(commitment);
+      const strategy: TransactionConfirmationStrategy = {
+        signature: txHash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        blockhash: latestBlockHash.blockhash,
+      };
+      await connection.confirmTransaction(strategy, commitment);
+
+      // Fetch the created account
+      const itemAccount = await program.account.itemAccount.fetch(
+        itemAccountPDA
+      );
+
+      console.log("On-chain data is: ", itemAccount.content);
 
       return txHash;
     } catch (error) {
@@ -81,5 +137,6 @@ export default function useProgram() {
   return {
     program,
     initUserAnchor,
+    addItemAnchor,
   };
 }
