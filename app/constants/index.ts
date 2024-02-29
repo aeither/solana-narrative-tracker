@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
 export const PROGRAM_ID = new PublicKey(
-  `4ZSk3uQwzMVNKfcy7nWcgXnB1EbrRPBBtFjuf84oz6aW`
+  `CfqCT3ojotQKHizmE73CBo95LT6MLCKQCEm3dnztJPUk`
 );
 
 export const RPC_URL =

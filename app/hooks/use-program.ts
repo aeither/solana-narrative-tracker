@@ -39,6 +39,10 @@ export default function useProgram() {
 
       const newAccountKp = new web3.Keypair();
 
+      // For enum
+      // const state = program.programIdl.enums.find((e) => e.name === "AppState")
+      //   .variants[1].name;
+
       // Send transaction
       const data = new BN(42);
       const txHash = await program.methods

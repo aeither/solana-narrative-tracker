@@ -1,6 +1,6 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import useProgram from "~/hooks/anchor";
+import useProgram from "~/hooks/use-program";
 
 const InitializeComponent = () => {
   const { initUserAnchor } = useProgram();
