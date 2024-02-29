@@ -12,8 +12,10 @@ import {
 } from "@remix-run/react";
 import { ContextProvider } from "./context/ContextProvider";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import stylesheet from "~/tailwind.css";
 
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesheet },
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
