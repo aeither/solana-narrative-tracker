@@ -1,76 +1,113 @@
-// app/routes/signup.tsx
-import { ActionFunction, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { PublicKey } from "@solana/web3.js";
+import { useEffect, useState } from "react";
+import useProgram from "~/hooks/use-program";
 
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const username = formData.get("username");
-  const password = formData.get("password");
+const InitializeComponent = () => {
+  const { initUserAnchor, program, addItemAnchor } = useProgram();
+  const wallet = useWallet();
 
-  console.log(
-    "🚀 ~ constaction:ActionFunction= ~ username:",
-    username,
-    " password: ",
-    password
-  );
+  const [user, setUser] = useState<string | undefined>(undefined);
+  const [narratives, setNarratives] = useState<any[]>();
+  const [content, setContent] = useState("");
 
-  // Perform signup logic here, e.g., create user in the database
-  // If successful, redirect to the login page or dashboard
-  return redirect("/login");
-};
+  const onInitializeClick = async () => {
+    await initUserAnchor();
+  };
 
-export default function Index() {
-  const actionData = useActionData();
-  // Handle actionData for errors or success messages
+  const onAddItemAnchor = async (content: string) => {
+    await addItemAnchor(content);
+
+    setContent("");
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (program && wallet && wallet.publicKey) {
+        try {
+          const [userAccountPDA] = PublicKey.findProgramAddressSync(
+            [Buffer.from("user"), wallet.publicKey.toBuffer()],
+            program.programId
+          );
+
+          const userAccount = await program.account.userAccount.fetch(
+            userAccountPDA
+          );
+
+          setUser(userAccount.authority.toString());
+        } catch (error) {
+          setUser("");
+          console.error(error);
+        }
+      }
+    };
+    fetchUser();
+  }, [wallet, program]);
+
+  useEffect(() => {
+    const fetchNarratives = async () => {
+      if (program && wallet && wallet.publicKey) {
+        const myItemAccounts = await program.account.itemAccount.all([
+          {
+            memcmp: {
+              offset: 8, // Discriminator.
+              bytes: wallet.publicKey.toString(),
+            },
+          },
+        ]);
+
+        // myItemAccounts[0].account.content
+        setNarratives(myItemAccounts);
+      }
+    };
+    fetchNarratives();
+  }, [wallet, program]);
 
   return (
-    <Form method="post" className="space-y-6">
-      <div>
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Username
-        </label>
-        <div className="mt-1">
-          <input
-            id="username"
-            name="username"
-            type="text"
-            autoComplete="username"
-            required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-      </div>
+    <div className="flex w-full flex-col justify-center items-center">
+      <div className="flex flex-col w-full max-w-md items-center py-12 gap-4">
+        <WalletMultiButton />
 
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Password
-        </label>
-        <div className="mt-1">
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
-      </div>
+        {user == "" && (
+          <>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={onInitializeClick}
+              disabled={!wallet.connected}
+            >
+              Initialize
+            </button>
+          </>
+        )}
 
-      <div>
+        <input
+          type="text"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="mt-1 block w-full rounded-md border-2 border-blue-500 shadow-lg focus:border-indigo-500 focus:ring focus:ring-indigo-300 focus:ring-opacity-50"
+        />
         <button
-          type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => onAddItemAnchor(content)}
+          disabled={!wallet.connected}
         >
-          Sign up
+          add narrative
         </button>
+
+        {/* List */}
+        <div className="flex flex-col gap-2 pt-16">
+          {narratives?.map((narrative) => (
+            <>
+              <div className="text-2xl font-bold">
+                {narrative.account.content}
+              </div>
+            </>
+          ))}
+        </div>
       </div>
-    </Form>
+    </div>
   );
-}
+};
+
+export default InitializeComponent;

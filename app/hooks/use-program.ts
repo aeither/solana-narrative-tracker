@@ -66,7 +66,7 @@ export default function useProgram() {
         wallet.publicKey
       );
 
-      console.log("On-chain data is: ", newAccount.lastId.toString());
+      console.log("On-chain last Id is: ", newAccount.lastId.toString());
 
       return txHash;
     } catch (error) {
@@ -124,7 +124,7 @@ export default function useProgram() {
         itemAccountPDA
       );
 
-      console.log("On-chain data is: ", itemAccount.content);
+      console.log("On-chain narrative is: ", itemAccount.content);
 
       return txHash;
     } catch (error) {
