@@ -18,6 +18,8 @@ const InitializeComponent = () => {
 
   const onAddItemAnchor = async (content: string) => {
     await addItemAnchor(content);
+
+    setContent("");
   };
 
   useEffect(() => {
@@ -32,7 +34,6 @@ const InitializeComponent = () => {
           const userAccount = await program.account.userAccount.fetch(
             userAccountPDA
           );
-          console.log("🚀 ~ fetchNarratives ~ userAccount:", userAccount);
 
           setUser(userAccount.authority.toString());
         } catch (error) {
@@ -65,7 +66,7 @@ const InitializeComponent = () => {
 
   return (
     <Suspense>
-      <div className="App">
+      <div className="flex w-full flex-col">
         <WalletMultiButton />
 
         {user == "" && (
@@ -79,8 +80,10 @@ const InitializeComponent = () => {
             </button>
           </>
         )}
+
         <input
           type="text"
+          value={content}
           onChange={(e) => {
             setContent(e.target.value);
           }}
@@ -91,15 +94,17 @@ const InitializeComponent = () => {
           onClick={() => onAddItemAnchor(content)}
           disabled={!wallet.connected}
         >
-          add item
+          add narrative
         </button>
 
         {/* List */}
-        {narratives?.map((narrative) => (
-          <>
-            <span>{narrative.account.content}</span>
-          </>
-        ))}
+        <div className="flex gap-2">
+          {narratives?.map((narrative) => (
+            <>
+              <div>{narrative.account.content}</div>
+            </>
+          ))}
+        </div>
       </div>
     </Suspense>
   );

@@ -79,15 +79,14 @@ export default function useProgram() {
     try {
       if (!program || !wallet.publicKey || !wallet.signTransaction) return;
 
-      // Fetch the created account
-      const userAccount = await program.account.userAccount.fetch(
-        wallet.publicKey
-      );
-
       // Derive the PDA for the newUserAccount
       const [userAccountPDA] = PublicKey.findProgramAddressSync(
         [Buffer.from("user"), wallet.publicKey.toBuffer()],
         program.programId
+      );
+      // Fetch the created account
+      const userAccount = await program.account.userAccount.fetch(
+        userAccountPDA
       );
 
       // Derive the PDA for the itemAccountPDA
