@@ -1,7 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey } from "@solana/web3.js";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useProgram from "~/hooks/use-program";
 
 const InitializeComponent = () => {
@@ -65,8 +65,8 @@ const InitializeComponent = () => {
   }, [wallet, program]);
 
   return (
-    <Suspense>
-      <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col justify-center items-center">
+      <div className="flex flex-col w-full max-w-md items-center py-12 gap-4">
         <WalletMultiButton />
 
         {user == "" && (
@@ -84,11 +84,9 @@ const InitializeComponent = () => {
         <input
           type="text"
           value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
-          }}
+          onChange={(e) => setContent(e.target.value)}
+          className="mt-1 block w-full rounded-md border-2 border-blue-500 shadow-lg focus:border-indigo-500 focus:ring focus:ring-indigo-300 focus:ring-opacity-50"
         />
-
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => onAddItemAnchor(content)}
@@ -98,15 +96,17 @@ const InitializeComponent = () => {
         </button>
 
         {/* List */}
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 pt-16">
           {narratives?.map((narrative) => (
             <>
-              <div>{narrative.account.content}</div>
+              <div className="text-2xl font-bold">
+                {narrative.account.content}
+              </div>
             </>
           ))}
         </div>
       </div>
-    </Suspense>
+    </div>
   );
 };
 
